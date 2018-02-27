@@ -9,6 +9,7 @@ Created on Tue Feb 20 14:12:02 2018
 import pandas as pd
 import numpy as np
 import statsmodels.nonparametric.smoothers_lowess
+import matplotlib.pyplot as plt
 everything = pd.read_csv('activity.csv')
 
 
@@ -44,7 +45,7 @@ print("There are 10995 rural students and 9005 urban students")
 
 #“How does the average freshman GPA compare between rural and urban schools?”
 fresh_loc = student_location[(student_location.year == "Fresh")]
-fresh_gpa = gpas[((gpas.year == "Fr"))]
+fresh_gpa = gpas[((gpas.year == "Fr"))] 
 yet_another_merge = pd.merge(fresh_loc, fresh_gpa, left_on = 'name', right_on = 'name')
 fresh_gpa_urban = yet_another_merge[yet_another_merge.location == 'urban']
 fresh_gpa_rural = yet_another_merge[yet_another_merge.location == 'rural']
@@ -63,14 +64,23 @@ fr_and_nonfr = fr_and_nonfr.replace(to_replace= 'Jr', value= 'nonfr')
 fr_and_nonfr = fr_and_nonfr.replace(to_replace= 'So', value= 'nonfr')
 
 fr_and_nonfr.boxplot(column= 'gpa', by= 'year', notch = True)
+plt.xlabel('Year (Freshman/Non-Freshman)', fontsize=15)
+plt.ylabel('GPA', fontsize=15)
+plt.title('Freshman GPAs vs Non-Freshman GPAs', fontsize=16)
+plt.suptitle("")
 
 #%%QUESTION 11
 # does the average year-end GPA vary significantly by major?
 students['major'].value_counts()
 gpa_majors = pd.merge(students, gpas, left_on = 'name', right_on = 'name')
-gpa_majors.head()
+
 gpa_majors = gpa_majors.drop(labels=['creds','name','school','year_x','year_y'], axis=1)
-gpa_majors.boxplot(column='gpa',by='major',notch=True)
+print(gpa_majors.head())
+gpa_majors_plot = gpa_majors.boxplot(column='gpa',by='major',notch=True)
+plt.xlabel('Major', fontsize=15)
+plt.ylabel('GPA', fontsize=15)
+plt.title('GPAs Compared by Major', fontsize=16)
+plt.suptitle("")
 
 
 #%% Question 12
@@ -78,9 +88,28 @@ gpa_majors.boxplot(column='gpa',by='major',notch=True)
 gpa_schools = pd.merge(gpas, students, on='name')
 gpa_schools = gpa_schools.drop(labels=['year_y', 'creds', 'major', 'name', 'year_x'], axis=1)
 gpa_schools.boxplot(column='gpa', by='school', notch=True)
+plt.xlabel('GPA', fontsize=15)
+plt.ylabel('School', fontsize=15)
+plt.title('GPAs Compared By School', fontsize=16)
+plt.suptitle("")
 
 #%% Question 13
 #Create a scatterplot showing number-of-credits vs. average-yearly-GPA, with a LOESS fit.
-credits_avgGpa = pd.merge(gpas,students,on='name')
-credits_avgGpa = credits_avgGpa.drop(labels=['major','year_y','school'],axis=1)
-credits_avgGpa
+students_avgGpa = pd.merge(gpas,students,on='name')
+students_avgGpa = students_avgGpa.drop(labels=['major','year_x','year_y','school','creds'],axis=1)
+students_avgGpa = students_avgGpa.groupby('name').mean()
+students_avgGpa = students_avgGpa.reset_index()
+print(students_avgGpa.head())
+
+students_credits = students.copy()
+students_credits = students_credits.drop(labels=['major','year','school'],axis=1)
+students_credits = students_credits.drop_duplicates()
+print(students_credits.head())
+
+gpa_creds = pd.merge(students_avgGpa,students_credits,on='name')
+plt.scatter(gpa_creds.creds, gpa_creds.gpa)
+lowess = statsmodels.nonparametric.smoothers_lowess.lowess(gpa_creds.gpa, gpa_creds.creds, frac=1/4)
+plt.plot(lowess[:,0], lowess[:,1], color='red')
+plt.xlabel('Current Credits', fontsize=15)
+plt.ylabel('Average Yearly GPA', fontsize=15)
+plt.title('Average GPA vs Current Number of Credits', fontsize=16)
