@@ -8,6 +8,7 @@ Created on Tue Feb 20 14:12:02 2018
 #%%
 import pandas as pd
 import numpy as np
+import statsmodels.nonparametric.smoothers_lowess
 everything = pd.read_csv('activity.csv')
 
 
@@ -68,13 +69,18 @@ fr_and_nonfr.boxplot(column= 'gpa', by= 'year', notch = True)
 students['major'].value_counts()
 gpa_majors = pd.merge(students, gpas, left_on = 'name', right_on = 'name')
 gpa_majors.head()
-gpa_majors = gpa_majors.drop(labels=['year_x','creds'], axis=1)
+gpa_majors = gpa_majors.drop(labels=['creds','name','school','year_x','year_y'], axis=1)
+gpa_majors.boxplot(column='gpa',by='major',notch=True)
 
-gpa_majors.groupby(['major', 'year_y'])['gpa'].mean()
 
 #%% Question 12
 #does the average year-end GPA vary significantly by school?
-gpa_majors.groupby(['school', 'year_y'])['gpa'].mean()
+gpa_schools = pd.merge(gpas, students, on='name')
+gpa_schools = gpa_schools.drop(labels=['year_y', 'creds', 'major', 'name', 'year_x'], axis=1)
+gpa_schools.boxplot(column='gpa', by='school', notch=True)
 
 #%% Question 13
 #Create a scatterplot showing number-of-credits vs. average-yearly-GPA, with a LOESS fit.
+credits_avgGpa = pd.merge(gpas,students,on='name')
+credits_avgGpa = credits_avgGpa.drop(labels=['major','year_y','school'],axis=1)
+credits_avgGpa
