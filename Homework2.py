@@ -56,8 +56,8 @@ print("The average freshman GPA for urban students is " + str(agv_gpa_urban))
 print("The average freshman GPA for rural students is " + str(agv_gpa_rural))    
 
 #%%
-# do freshmen GPAs differon average from non-freshmen? plot
 
+# do freshmen GPAs differon average from non-freshmen? plot
 fr_and_nonfr = gpas.copy()
 fr_and_nonfr = fr_and_nonfr.replace(to_replace= 'Sr', value= 'nonfr')
 fr_and_nonfr = fr_and_nonfr.replace(to_replace= 'Jr', value= 'nonfr')
@@ -68,6 +68,9 @@ plt.xlabel('Year (Freshman/Non-Freshman)', fontsize=15)
 plt.ylabel('GPA', fontsize=15)
 plt.title('Freshman GPAs vs Non-Freshman GPAs', fontsize=16)
 plt.suptitle("")
+
+#%% For use when running each cell separately and in order (may cause "run all") to work poorly
+plt.clf()
 
 #%%QUESTION 11
 # does the average year-end GPA vary significantly by major?
@@ -82,6 +85,8 @@ plt.ylabel('GPA', fontsize=15)
 plt.title('GPAs Compared by Major', fontsize=16)
 plt.suptitle("")
 
+#%% For use when running each cell separately and in order (may cause "run all") to work poorly
+plt.clf()
 
 #%% Question 12
 #does the average year-end GPA vary significantly by school?
@@ -92,6 +97,9 @@ plt.xlabel('GPA', fontsize=15)
 plt.ylabel('School', fontsize=15)
 plt.title('GPAs Compared By School', fontsize=16)
 plt.suptitle("")
+
+#%% For use when running each cell separately and in order (may cause "run all") to work poorly
+plt.clf()
 
 #%% Question 13
 #Create a scatterplot showing number-of-credits vs. average-yearly-GPA, with a LOESS fit.
